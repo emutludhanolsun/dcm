@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -19,7 +20,9 @@ class CreateUserScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Profil Oluştur'),
+          title: Text(
+            'Profil Oluştur',
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(15),
@@ -43,6 +46,16 @@ class MyCustomFormState extends State<MyCustomForm> {
   //
   // Note: This is a GlobalKey<FormState>,          ?????????????????????????????
   // not a GlobalKey<MyCustomFormState>.
+
+  // this allows us to access the TextField text
+  TextEditingController textFieldController = TextEditingController();
+  List<DropdownMenuItem> workingStatusList = [];
+  void loadWorkingStatusList() {
+    workingStatusList.add(new DropdownMenuItem(child: new Text('Çalışıyorum'), value: 0));
+
+    workingStatusList.add(new DropdownMenuItem(child: new Text('Çalışmıyorum'), value: 1));
+  }
+
   final _formKey = GlobalKey<FormState>();
   String _ratingController;
   @override
@@ -79,6 +92,7 @@ class MyCustomFormState extends State<MyCustomForm> {
             },
           ),
           TextFormField(
+            controller: textFieldController,
             decoration: new InputDecoration(
               labelText: "Yaş",
               fillColor: Colors.white,
@@ -104,15 +118,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 // borderSide: new BorderSide(),
               ),
             ),
-            items: [
-              "Çalışıyorum",
-              "Çalışmıyorum"
-            ]
-                .map((label) => DropdownMenuItem(
-                      child: Text(label.toString()),
-                      value: label,
-                    ))
-                .toList(),
+            items: workingStatusList,
             onChanged: (value) {
               setState(() {
                 _ratingController = value;
@@ -129,23 +135,45 @@ class MyCustomFormState extends State<MyCustomForm> {
                       // ignore: deprecated_member_use
                       .showSnackBar(SnackBar(content: Text('Sokağa çıkma durumunuz inceleniyor')));
                 }
-                Navigator.pushNamed(context, "/info");
-                // Navigator.push(context, route)
+                // Navigator.pushNamed(context, "/info");
+                _sendDataToSecondScreen(context);
               },
-              child: Text("Oluştur"),   //TODO: fieldlar boşsa buton basmasın
+              child: Text("Oluştur"), //TODO: fieldlar boşsa buton basmasın
             ),
           ),
         ],
       ),
     );
   }
+
+  // get the text in the TextField and start the Second Screen
+  void _sendDataToSecondScreen(BuildContext context) {
+    String textToSend = textFieldController.text;
+
+    User user = new User("Enes", 25, 0);
+    print(user.message);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => InfoScreen(
+            text: textToSend,
+          ),
+        ));
+  }
 }
 
 class InfoScreen extends StatelessWidget {
-  // final String text;
-  // InfoScreen({Key key, @required this.text}) : super(key: key);  //TODO: fieldlar için keyler eklencek
+  
+
+  final String text;
+  InfoScreen({Key key, @required this.text}) : super(key: key); //TODO: fieldlar için keyler eklencek
+  
+  
   @override
   Widget build(BuildContext context) {
+    int gun = DateTime.now().weekday;
+    print(gun.toString());
+    print(this.text);
     return Scaffold(
       appBar: AppBar(
         title: Text("Info"),
@@ -164,10 +192,23 @@ class InfoScreen extends StatelessWidget {
   }
 }
 
+// calculate(String age, isWorking) {
+//   if (isWorking == "Çalışıyorum") {
+//       isWorking = true;
+//     }
+
+//     // TODO: get date and time info from telephone AND add other calculations
+//     if (this.isWorking == true) {
+//       this.isAllowed = true;
+//       this.message = messageList[1];
+//     }
+// }
+
 class User {
   String name;
   int age;
-  bool isWorking;
+  int isWorking;
+
   bool isAllowed;
   String message;
   List<String> messageList = [
@@ -175,16 +216,21 @@ class User {
     "çıkabilirsin"
   ];
 
-  User(String name, age, isWorking) {
+  User(String name, int age, isWorking) {
     this.name = name;
-    this.age = int.parse(age);
-    if (isWorking == "Çalışıyorum") {
-      this.isWorking = true;
+    this.age = age;
+    this.isWorking = isWorking;
+
+    int gun = DateTime.now().weekday;
+    int saat = DateTime.now().hour;
+
+    if (isWorking == 0) {
+      this.isAllowed = true;
+    } else {
+      if ((10 <= saat) && (saat <= 20)) {}
     }
 
-    // TODO: get date and time info from telephone AND add other calculations
-    if (this.isWorking == true) {
-      this.isAllowed = true;
+    if (this.isAllowed == true) {
       this.message = messageList[1];
     }
   }
