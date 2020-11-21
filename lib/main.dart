@@ -19,7 +19,8 @@ class CreateUserScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Profil Oluştur'),
+          title: new Center(
+              child: new Text("Profil Oluştur", textAlign: TextAlign.center)),
         ),
         body: Padding(
           padding: const EdgeInsets.all(15),
@@ -55,29 +56,30 @@ class MyCustomFormState extends State<MyCustomForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: const EdgeInsets.fromLTRB(135, 0, 300, 15), // TODO: orientation according to screenSize
+            padding: const EdgeInsets.fromLTRB(
+                135, 0, 300, 15), // TODO: orientation according to screenSize
             child: new Icon(
               Icons.account_circle_rounded,
               size: 75,
               color: Colors.blueGrey,
             ),
           ),
-          TextFormField(
-            decoration: new InputDecoration(
-              labelText: "İsim",
-              fillColor: Colors.white,
-              border: new OutlineInputBorder(
-                borderRadius: new BorderRadius.circular(25),
-                // borderSide: new BorderSide(),
-              ),
-            ),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
-          ),
+          //TextFormField(
+          //decoration: new InputDecoration(
+          //labelText: "İsim",
+          //fillColor: Colors.white,
+          //border: new OutlineInputBorder(
+          //borderRadius: new BorderRadius.circular(25),
+          // borderSide: new BorderSide(),
+          //),
+          //),
+          //validator: (value) {
+          //if (value.isEmpty) {
+          //return 'Please enter some text';
+          //}
+          //return null;
+          //},
+          //),
           TextFormField(
             decoration: new InputDecoration(
               labelText: "Yaş",
@@ -104,10 +106,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 // borderSide: new BorderSide(),
               ),
             ),
-            items: [
-              "Çalışıyorum",
-              "Çalışmıyorum"
-            ]
+            items: ["Çalışıyorum", "Çalışmıyorum"]
                 .map((label) => DropdownMenuItem(
                       child: Text(label.toString()),
                       value: label,
@@ -120,19 +119,20 @@ class MyCustomFormState extends State<MyCustomForm> {
             },
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 50.0),
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
             child: ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
                   // If the form is valid, display a Snackbar.
                   Scaffold.of(context)
                       // ignore: deprecated_member_use
-                      .showSnackBar(SnackBar(content: Text('Sokağa çıkma durumunuz inceleniyor')));
+                      .showSnackBar(SnackBar(
+                          content: Text('Sokağa çıkma durumunuz inceleniyor')));
                 }
                 Navigator.pushNamed(context, "/info");
                 // Navigator.push(context, route)
               },
-              child: Text("Oluştur"),   //TODO: fieldlar boşsa buton basmasın
+              child: Text("Oluştur"), //TODO: fieldlar boşsa buton basmasın
             ),
           ),
         ],
@@ -165,24 +165,25 @@ class InfoScreen extends StatelessWidget {
 }
 
 class User {
-  String name;
+  //String name;
   int age;
   bool isWorking;
   bool isAllowed;
   String message;
-  List<String> messageList = [
-    "otur",
-    "çıkabilirsin"
-  ];
+  List<String> messageList = ["otur", "çıkabilirsin"];
 
   User(String name, age, isWorking) {
-    this.name = name;
+    //this.name = name;
     this.age = int.parse(age);
     if (isWorking == "Çalışıyorum") {
       this.isWorking = true;
     }
+    int gun = DateTime.now().day;
+    int saat = DateTime.now().hour;
+    print(gun.toString());
 
     // TODO: get date and time info from telephone AND add other calculations
+
     if (this.isWorking == true) {
       this.isAllowed = true;
       this.message = messageList[1];
