@@ -132,7 +132,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 Navigator.pushNamed(context, "/info");
                 // Navigator.push(context, route)
               },
-              child: Text("Oluştur"),
+              child: Text("Oluştur"),   //TODO: fieldlar boşsa buton basmasın
             ),
           ),
         ],
@@ -142,8 +142,8 @@ class MyCustomFormState extends State<MyCustomForm> {
 }
 
 class InfoScreen extends StatelessWidget {
-  final String text;
-  InfoScreen({Key key, @required this.text}) : super(key: key);
+  // final String text;
+  // InfoScreen({Key key, @required this.text}) : super(key: key);  //TODO: fieldlar için keyler eklencek
   @override
   Widget build(BuildContext context) {
     return Scaffold(
