@@ -55,13 +55,10 @@ class MyCustomFormState extends State<MyCustomForm> {
   TextEditingController ageFieldController = TextEditingController();
   TextEditingController workStatusFieldController = TextEditingController();
 
-  List<DropdownMenuItem> workingStatusList = [];
-  void loadWorkingStatusList() {
-    workingStatusList
-        .add(new DropdownMenuItem(child: new Text('Çalışıyorum'), value: 0));
-    workingStatusList
-        .add(new DropdownMenuItem(child: new Text('Çalışmıyorum'), value: 1));
-  }
+  final workingStatusList = {
+    '0': 'Çalışıyorum',
+    '1': 'Çalışmıyorum',
+  };
 
   String workStatus = "Çalışıyorum";
 
@@ -124,13 +121,13 @@ class MyCustomFormState extends State<MyCustomForm> {
           ),
 
           DropdownButtonFormField(
-            value: workStatus,
             // items: workingStatusList,
-            items: ["Çalışıyorum", "Çalışmıyorum"]
-                .map((label) => DropdownMenuItem(
-                      child: Text(label.toString()),
-                      value: label,
-                    ))
+            items: workingStatusList.entries
+                .map<DropdownMenuItem<String>>(
+                    (MapEntry<String, String> e) => DropdownMenuItem<String>(
+                          value: e.key,
+                          child: Text(e.value),
+                        ))
                 .toList(),
             onChanged: (value) {
               setState(() {
