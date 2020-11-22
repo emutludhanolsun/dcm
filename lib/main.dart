@@ -183,8 +183,8 @@ class MyCustomFormState extends State<MyCustomForm> {
     print("age: " + ageToSend);
     print("workStatus: " + workStatus);
     User user = new User(int.parse(ageToSend), workStatus);
-    print("dışarı çıkmasına izin var mı? " + user.isWorking.toString());
-    print("mesaj: " + user.message);
+    print("dışarı çıkmasına izin var mı? " + user.isAllowed.toString());
+    // print("mesaj: " + user.message);
   }
 }
 
@@ -232,9 +232,9 @@ class User {
     this.age = age;
     // this.isWorking = isWorking;
     if (workingStatus == "Çalışıyorum") {
-      this.isWorking = 1;
+      this.isAllowed = true;
     } else {
-      isWorking = 0;
+      isAllowed = false;
     }
 
     int gun = DateTime.now().weekday;
