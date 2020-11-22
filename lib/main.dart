@@ -57,8 +57,10 @@ class MyCustomFormState extends State<MyCustomForm> {
 
   List<DropdownMenuItem> workingStatusList = [];
   void loadWorkingStatusList() {
-    workingStatusList.add(new DropdownMenuItem(child: new Text('Çalışıyorum'), value: 0));
-    workingStatusList.add(new DropdownMenuItem(child: new Text('Çalışmıyorum'), value: 1));
+    workingStatusList
+        .add(new DropdownMenuItem(child: new Text('Çalışıyorum'), value: 0));
+    workingStatusList
+        .add(new DropdownMenuItem(child: new Text('Çalışmıyorum'), value: 1));
   }
 
   String workStatus = "Çalışıyorum";
@@ -72,7 +74,8 @@ class MyCustomFormState extends State<MyCustomForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: const EdgeInsets.fromLTRB(135, 0, 300, 15), // TODO: orientation according to screenSize
+            padding: const EdgeInsets.fromLTRB(
+                135, 0, 300, 15), // TODO: orientation according to screenSize
             child: new Icon(
               Icons.account_circle_rounded,
               size: 75,
@@ -123,10 +126,7 @@ class MyCustomFormState extends State<MyCustomForm> {
           DropdownButtonFormField(
             value: workStatus,
             // items: workingStatusList,
-            items: [
-              "Çalışıyorum",
-              "Çalışmıyorum"
-            ]
+            items: ["Çalışıyorum", "Çalışmıyorum"]
                 .map((label) => DropdownMenuItem(
                       child: Text(label.toString()),
                       value: label,
@@ -154,7 +154,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                 if (_formKey.currentState.validate()) {
                   Scaffold.of(context)
                       // ignore: deprecated_member_use
-                      .showSnackBar(SnackBar(content: Text('Sokağa çıkma durumunuz inceleniyor')));
+                      .showSnackBar(SnackBar(
+                          content: Text('Sokağa çıkma durumunuz inceleniyor')));
 
                   // Navigator.pushNamed(context, "/info");
                   _sendDataToSecondScreen(context, workStatus);
@@ -193,7 +194,8 @@ class InfoScreen extends StatelessWidget {
   final int age;
   final String workingStatus;
 
-  InfoScreen({Key key, @required this.age, this.workingStatus}) : super(key: key);
+  InfoScreen({Key key, @required this.age, this.workingStatus})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -222,10 +224,7 @@ class User {
 
   bool isAllowed;
   String message;
-  List<String> messageList = [
-    "otur",
-    "çıkabilirsin"
-  ];
+  List<String> messageList = ["otur", "çıkabilirsin"];
 
   User(/*String name,*/ int age, /*isWorking*/ String workingStatus) {
     // this.name = name;
@@ -250,6 +249,6 @@ class User {
       this.message = messageList[1];
     }
 
-    // print(this.isAllowed.toString());
+    print(this.isAllowed.toString());
   }
 }
