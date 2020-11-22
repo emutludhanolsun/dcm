@@ -183,7 +183,7 @@ class MyCustomFormState extends State<MyCustomForm> {
     print("age: " + ageToSend);
     print("workStatus: " + workStatus);
     User user = new User(int.parse(ageToSend), workStatus);
-    print("dışarı çıkmasına izin var mı? " + user.isAllowed.toString());
+    print("dışarı çıkmasına izin var mı? " + user.isWorking.toString());
     print("mesaj: " + user.message);
   }
 }
