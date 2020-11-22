@@ -168,7 +168,6 @@ class MyCustomFormState extends State<MyCustomForm> {
     );
   }
 
-  // get the text in the TextField and start the Second Screen
   void _sendDataToSecondScreen(BuildContext context, String workStatus) {
     String ageToSend = ageFieldController.text;
 
@@ -181,13 +180,15 @@ class MyCustomFormState extends State<MyCustomForm> {
           ),
         ));
 
+    print("age: " + ageToSend);
+    print("workStatus: " + workStatus);
     User user = new User(int.parse(ageToSend), workStatus);
     print("dışarı çıkmasına izin var mı? " + user.isAllowed.toString());
     print("mesaj: " + user.message);
   }
 }
 
-// SONUÇ GÖSTERİLCEK
+//TODO: SONUÇ GÖSTERİLECEK
 class InfoScreen extends StatelessWidget {
   final int age;
   final String workingStatus;
@@ -213,6 +214,7 @@ class InfoScreen extends StatelessWidget {
   }
 }
 
+// TODO: Constructor fonksiyonu tamamlancak YA DA Class ı sil direkt fonksiyon yaz.
 class User {
   // String name;
   int age;
