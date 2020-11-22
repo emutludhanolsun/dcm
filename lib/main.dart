@@ -19,8 +19,9 @@ class CreateUserScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: new Center(
-              child: new Text("Profil Oluştur", textAlign: TextAlign.center)),
+          title: Text(
+            'Profil Oluştur',
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(15),
@@ -44,15 +45,32 @@ class MyCustomFormState extends State<MyCustomForm> {
   //
   // Note: This is a GlobalKey<FormState>,          ?????????????????????????????
   // not a GlobalKey<MyCustomFormState>.
+
+  // this allows us to access the TextField text
   final _formKey = GlobalKey<FormState>();
-  String _ratingController;
+
+  // bool _validAge = false;
+  // bool _validIsWorking = false;
+
+  TextEditingController ageFieldController = TextEditingController();
+  TextEditingController workStatusFieldController = TextEditingController();
+
+  List<DropdownMenuItem> workingStatusList = [];
+  void loadWorkingStatusList() {
+    workingStatusList
+        .add(new DropdownMenuItem(child: new Text('Çalışıyorum'), value: 0));
+    workingStatusList
+        .add(new DropdownMenuItem(child: new Text('Çalışmıyorum'), value: 1));
+  }
+
+  String workStatus = "Çalışıyorum";
+
   @override
   Widget build(BuildContext context) {
-    // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
       child: Column(
-        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
@@ -64,48 +82,50 @@ class MyCustomFormState extends State<MyCustomForm> {
               color: Colors.blueGrey,
             ),
           ),
-          //TextFormField(
-          //decoration: new InputDecoration(
-          //labelText: "İsim",
-          //fillColor: Colors.white,
-          //border: new OutlineInputBorder(
-          //borderRadius: new BorderRadius.circular(25),
-          // borderSide: new BorderSide(),
-          //),
-          //),
-          //validator: (value) {
-          //if (value.isEmpty) {
-          //return 'Please enter some text';
-          //}
-          //return null;
-          //},
-          //),
+
+          // TextFormField(
+          //   validator: (value) {
+          //     if (value.isEmpty) {
+          //       return "Lütfen isminizi giriniz.";
+          //     }
+          //     return null;
+          //   },
+          //   decoration: new InputDecoration(
+          //     labelText: "İsim",
+          //     fillColor: Colors.white,
+          //     border: new OutlineInputBorder(
+          //       borderRadius: new BorderRadius.circular(25),
+          //       // borderSide: new BorderSide(),
+          //     ),
+          //   ),
+          // ),
+
           TextFormField(
+            controller: ageFieldController,
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              // print(value);
+              if (value.isEmpty) {
+                return "Lütfen yaşınızı giriniz.";
+                // } else {
+                //   _validAge = true;
+                //   print("x");
+              }
+              return null;
+            },
             decoration: new InputDecoration(
               labelText: "Yaş",
               fillColor: Colors.white,
               border: new OutlineInputBorder(
                 borderRadius: new BorderRadius.circular(25),
-                // borderSide: new BorderSide(),
+                borderSide: new BorderSide(),
               ),
             ),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
           ),
+
           DropdownButtonFormField(
-            value: _ratingController,
-            decoration: new InputDecoration(
-              labelText: "Çalışma Durumu",
-              fillColor: Colors.white,
-              border: new OutlineInputBorder(
-                borderRadius: new BorderRadius.circular(25),
-                // borderSide: new BorderSide(),
-              ),
-            ),
+            value: workStatus,
+            // items: workingStatusList,
             items: ["Çalışıyorum", "Çalışmıyorum"]
                 .map((label) => DropdownMenuItem(
                       child: Text(label.toString()),
@@ -114,36 +134,68 @@ class MyCustomFormState extends State<MyCustomForm> {
                 .toList(),
             onChanged: (value) {
               setState(() {
-                _ratingController = value;
+                workStatus = value;
               });
             },
+            decoration: new InputDecoration(
+              labelText: "Çalışma Durumu",
+              fillColor: Colors.white,
+              border: new OutlineInputBorder(
+                borderRadius: new BorderRadius.circular(25),
+                // borderSide: new BorderSide(),
+              ),
+            ),
           ),
+
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10.0),
             child: ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  // If the form is valid, display a Snackbar.
                   Scaffold.of(context)
                       // ignore: deprecated_member_use
                       .showSnackBar(SnackBar(
                           content: Text('Sokağa çıkma durumunuz inceleniyor')));
+
+                  // Navigator.pushNamed(context, "/info");
+                  _sendDataToSecondScreen(context, workStatus);
                 }
-                Navigator.pushNamed(context, "/info");
-                // Navigator.push(context, route)
               },
-              child: Text("Oluştur"), //TODO: fieldlar boşsa buton basmasın
+              child: Text("Oluştur"),
             ),
           ),
         ],
       ),
     );
   }
+
+  void _sendDataToSecondScreen(BuildContext context, String workStatus) {
+    String ageToSend = ageFieldController.text;
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => InfoScreen(
+            age: int.parse(ageToSend),
+            workingStatus: workStatus,
+          ),
+        ));
+
+    print("age: " + ageToSend);
+    print("workStatus: " + workStatus);
+    User user = new User(int.parse(ageToSend), workStatus);
+    print("dışarı çıkmasına izin var mı? " + user.isAllowed.toString());
+    print("mesaj: " + user.message);
+  }
 }
 
+//TODO: SONUÇ GÖSTERİLECEK
 class InfoScreen extends StatelessWidget {
-  // final String text;
-  // InfoScreen({Key key, @required this.text}) : super(key: key);  //TODO: fieldlar için keyler eklencek
+  final int age;
+  final String workingStatus;
+
+  InfoScreen({Key key, @required this.age, this.workingStatus})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -164,29 +216,42 @@ class InfoScreen extends StatelessWidget {
   }
 }
 
+// TODO: Constructor fonksiyonu tamamlancak YA DA Class ı sil direkt fonksiyon yaz.
 class User {
-  //String name;
+  // String name;
   int age;
-  bool isWorking;
+  int isWorking;
+
   bool isAllowed;
   String message;
   List<String> messageList = ["otur", "çıkabilirsin"];
 
-  User(String name, age, isWorking) {
-    //this.name = name;
-    this.age = int.parse(age);
-    if (isWorking == "Çalışıyorum") {
-      this.isWorking = true;
+  User(/*String name,*/ int age, /*isWorking*/ String workingStatus) {
+    // this.name = name;
+    this.age = age;
+    // this.isWorking = isWorking;
+    if (workingStatus == "Çalışıyorum") {
+      this.isWorking = 1;
+    } else {
+      isWorking = 0;
     }
     int gun = DateTime.now().day;
     int saat = DateTime.now().hour;
     print(gun.toString());
 
-    // TODO: get date and time info from telephone AND add other calculations
+    //int gun = DateTime.now().weekday;
+    //int saat = DateTime.now().hour;
 
-    if (this.isWorking == true) {
+    if (isWorking == 0) {
       this.isAllowed = true;
+    } else {
+      if ((10 <= saat) && (saat <= 20)) {}
+    }
+
+    if (this.isAllowed == true) {
       this.message = messageList[1];
     }
+
+    print(this.isAllowed.toString());
   }
 }
