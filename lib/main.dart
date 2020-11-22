@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -48,23 +47,28 @@ class MyCustomFormState extends State<MyCustomForm> {
   // not a GlobalKey<MyCustomFormState>.
 
   // this allows us to access the TextField text
-  TextEditingController textFieldController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  // bool _validAge = false;
+  // bool _validIsWorking = false;
+
+  TextEditingController ageFieldController = TextEditingController();
+  TextEditingController workStatusFieldController = TextEditingController();
+
   List<DropdownMenuItem> workingStatusList = [];
   void loadWorkingStatusList() {
     workingStatusList.add(new DropdownMenuItem(child: new Text('Çalışıyorum'), value: 0));
-
     workingStatusList.add(new DropdownMenuItem(child: new Text('Çalışmıyorum'), value: 1));
   }
 
-  final _formKey = GlobalKey<FormState>();
-  String _ratingController;
+  String workStatus = "Çalışıyorum";
+
   @override
   Widget build(BuildContext context) {
-    // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
       child: Column(
-        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
@@ -75,41 +79,64 @@ class MyCustomFormState extends State<MyCustomForm> {
               color: Colors.blueGrey,
             ),
           ),
+
+          // TextFormField(
+          //   validator: (value) {
+          //     if (value.isEmpty) {
+          //       return "Lütfen isminizi giriniz.";
+          //     }
+          //     return null;
+          //   },
+          //   decoration: new InputDecoration(
+          //     labelText: "İsim",
+          //     fillColor: Colors.white,
+          //     border: new OutlineInputBorder(
+          //       borderRadius: new BorderRadius.circular(25),
+          //       // borderSide: new BorderSide(),
+          //     ),
+          //   ),
+          // ),
+
           TextFormField(
-            decoration: new InputDecoration(
-              labelText: "İsim",
-              fillColor: Colors.white,
-              border: new OutlineInputBorder(
-                borderRadius: new BorderRadius.circular(25),
-                // borderSide: new BorderSide(),
-              ),
-            ),
+            controller: ageFieldController,
+            keyboardType: TextInputType.number,
             validator: (value) {
+              // print(value);
               if (value.isEmpty) {
-                return 'Please enter some text';
+                return "Lütfen yaşınızı giriniz.";
+                // } else {
+                //   _validAge = true;
+                //   print("x");
               }
               return null;
             },
-          ),
-          TextFormField(
-            controller: textFieldController,
             decoration: new InputDecoration(
               labelText: "Yaş",
               fillColor: Colors.white,
               border: new OutlineInputBorder(
                 borderRadius: new BorderRadius.circular(25),
-                // borderSide: new BorderSide(),
+                borderSide: new BorderSide(),
               ),
             ),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
           ),
+
           DropdownButtonFormField(
-            value: _ratingController,
+            value: workStatus,
+            // items: workingStatusList,
+            items: [
+              "Çalışıyorum",
+              "Çalışmıyorum"
+            ]
+                .map((label) => DropdownMenuItem(
+                      child: Text(label.toString()),
+                      value: label,
+                    ))
+                .toList(),
+            onChanged: (value) {
+              setState(() {
+                workStatus = value;
+              });
+            },
             decoration: new InputDecoration(
               labelText: "Çalışma Durumu",
               fillColor: Colors.white,
@@ -118,27 +145,22 @@ class MyCustomFormState extends State<MyCustomForm> {
                 // borderSide: new BorderSide(),
               ),
             ),
-            items: workingStatusList,
-            onChanged: (value) {
-              setState(() {
-                _ratingController = value;
-              });
-            },
           ),
+
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 50.0),
             child: ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  // If the form is valid, display a Snackbar.
                   Scaffold.of(context)
                       // ignore: deprecated_member_use
                       .showSnackBar(SnackBar(content: Text('Sokağa çıkma durumunuz inceleniyor')));
+
+                  // Navigator.pushNamed(context, "/info");
+                  _sendDataToSecondScreen(context, workStatus);
                 }
-                // Navigator.pushNamed(context, "/info");
-                _sendDataToSecondScreen(context);
               },
-              child: Text("Oluştur"), //TODO: fieldlar boşsa buton basmasın
+              child: Text("Oluştur"),
             ),
           ),
         ],
@@ -147,33 +169,32 @@ class MyCustomFormState extends State<MyCustomForm> {
   }
 
   // get the text in the TextField and start the Second Screen
-  void _sendDataToSecondScreen(BuildContext context) {
-    String textToSend = textFieldController.text;
+  void _sendDataToSecondScreen(BuildContext context, String workStatus) {
+    String ageToSend = ageFieldController.text;
 
-    User user = new User("Enes", 25, 0);
-    print(user.message);
     Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => InfoScreen(
-            text: textToSend,
+            age: int.parse(ageToSend),
+            workingStatus: workStatus,
           ),
         ));
+
+    User user = new User(int.parse(ageToSend), workStatus);
+    print("dışarı çıkmasına izin var mı? " + user.isAllowed.toString());
+    print("mesaj: " + user.message);
   }
 }
 
+// SONUÇ GÖSTERİLCEK
 class InfoScreen extends StatelessWidget {
-  
+  final int age;
+  final String workingStatus;
 
-  final String text;
-  InfoScreen({Key key, @required this.text}) : super(key: key); //TODO: fieldlar için keyler eklencek
-  
-  
+  InfoScreen({Key key, @required this.age, this.workingStatus}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    int gun = DateTime.now().weekday;
-    print(gun.toString());
-    print(this.text);
     return Scaffold(
       appBar: AppBar(
         title: Text("Info"),
@@ -192,20 +213,8 @@ class InfoScreen extends StatelessWidget {
   }
 }
 
-// calculate(String age, isWorking) {
-//   if (isWorking == "Çalışıyorum") {
-//       isWorking = true;
-//     }
-
-//     // TODO: get date and time info from telephone AND add other calculations
-//     if (this.isWorking == true) {
-//       this.isAllowed = true;
-//       this.message = messageList[1];
-//     }
-// }
-
 class User {
-  String name;
+  // String name;
   int age;
   int isWorking;
 
@@ -216,10 +225,15 @@ class User {
     "çıkabilirsin"
   ];
 
-  User(String name, int age, isWorking) {
-    this.name = name;
+  User(/*String name,*/ int age, /*isWorking*/ String workingStatus) {
+    // this.name = name;
     this.age = age;
-    this.isWorking = isWorking;
+    // this.isWorking = isWorking;
+    if (workingStatus == "Çalışıyorum") {
+      this.isWorking = 1;
+    } else {
+      isWorking = 0;
+    }
 
     int gun = DateTime.now().weekday;
     int saat = DateTime.now().hour;
@@ -233,5 +247,7 @@ class User {
     if (this.isAllowed == true) {
       this.message = messageList[1];
     }
+
+    // print(this.isAllowed.toString());
   }
 }
