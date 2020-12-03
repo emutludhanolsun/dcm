@@ -241,28 +241,33 @@ class User {
     
 
     if (gun <= 5) {
-      //hafta içi çalışan çıkar
+      //hafta içi çalışan çıkar. Çalışmayan 21-5 çıkamaz.
       if (this.isWorking == true) {
         this.isAllowed = true;
         this.message = messageList[1];
+      }else{
+        if(saat <= 5 || saat >= 21){
+          this.isAllowed = false;
+          this.message = messageList[0];
+        }
+        }
       }
     }
 
     if (gun >= 6) {
-      //haftasonu 10 dan önce 20 dan sonra çıkamaz. else çıkar
+      //haftasonu çalışmayan çıkamaz. else çıkar
       if (this.isWorking == false) {
-        if (saat <= 10 || saat >= 20) {
-          this.isAllowed = false;
-          this.message = messageList[0];
-        } else {
-          this.isAllowed = true;
-          this.message = messageList[1];
-        }
-      } else {
         this.isAllowed = true;
         this.message = messageList[1];
-      }
-    }
+      }else {
+          this.isAllowed = true;
+          this.message = messageList[1];
+        
+         
+        }
+      } 
+    
+    
 
     if (gun <= 5) {
       //hafta içi çalışmayan 20 yaş altı 13 den önce ve 16 dan sonra çıkamaz
