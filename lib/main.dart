@@ -71,8 +71,7 @@ class MyCustomFormState extends State<MyCustomForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: const EdgeInsets.fromLTRB(
-                135, 0, 300, 15), // TODO: orientation according to screenSize
+            padding: const EdgeInsets.fromLTRB(135, 0, 300, 15), // TODO: orientation according to screenSize
             child: new Icon(
               Icons.account_circle_rounded,
               size: 75,
@@ -123,11 +122,10 @@ class MyCustomFormState extends State<MyCustomForm> {
           DropdownButtonFormField(
             // items: workingStatusList,
             items: workingStatusList.entries
-                .map<DropdownMenuItem<String>>(
-                    (MapEntry<String, String> e) => DropdownMenuItem<String>(
-                          value: e.key,
-                          child: Text(e.value),
-                        ))
+                .map<DropdownMenuItem<String>>((MapEntry<String, String> e) => DropdownMenuItem<String>(
+                      value: e.key,
+                      child: Text(e.value),
+                    ))
                 .toList(),
             onChanged: (value) {
               setState(() {
@@ -151,8 +149,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 if (_formKey.currentState.validate()) {
                   Scaffold.of(context)
                       // ignore: deprecated_member_use
-                      .showSnackBar(SnackBar(
-                          content: Text('Sokağa çıkma durumunuz inceleniyor')));
+                      .showSnackBar(SnackBar(content: Text('Sokağa çıkma durumunuz inceleniyor')));
 
                   // Navigator.pushNamed(context, "/info");
                   _sendDataToSecondScreen(context, workStatus);
@@ -182,7 +179,7 @@ class MyCustomFormState extends State<MyCustomForm> {
     print("workStatus: " + workStatus);
     User user = new User(int.parse(ageToSend), workStatus);
     print("dışarı çıkmasına izin var mı? " + user.isAllowed.toString());
-    // print("mesaj: " + user.message);
+    print("mesaj: " + user.message);
   }
 }
 
@@ -191,8 +188,7 @@ class InfoScreen extends StatelessWidget {
   final int age;
   final String workingStatus;
 
-  InfoScreen({Key key, @required this.age, this.workingStatus})
-      : super(key: key);
+  InfoScreen({Key key, @required this.age, this.workingStatus}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -217,35 +213,97 @@ class InfoScreen extends StatelessWidget {
 class User {
   // String name;
   int age;
-  int isWorking;
+  bool isWorking;
 
   bool isAllowed;
   String message;
-  List<String> messageList = ["otur", "çıkabilirsin"];
+  List<String> messageList = [
+    "otur",
+    "çıkabilirsin"
+  ];
 
   User(/*String name,*/ int age, /*isWorking*/ String workingStatus) {
     // this.name = name;
     this.age = age;
     // this.isWorking = isWorking;
-    if (workingStatus == "Çalışıyorum") {
-      this.isAllowed = true;
+    // print("ww");
+    // print(workingStatus);
+    if (workingStatus == "0") {
+      this.isWorking = true;
     } else {
-      isAllowed = false;
+      this.isWorking = false;
     }
 
     int gun = DateTime.now().weekday;
     int saat = DateTime.now().hour;
+    gun = 3;
+    saat = 12;
+    
 
-    if (isWorking == 0) {
-      this.isAllowed = true;
-    } else {
-      if ((10 <= saat) && (saat <= 20)) {}
+    if (gun <= 5) {
+      //hafta içi çalışan çıkar
+      if (this.isWorking == true) {
+        this.isAllowed = true;
+        this.message = messageList[1];
+      }
     }
 
-    if (this.isAllowed == true) {
-      this.message = messageList[1];
+    if (gun >= 6) {
+      //haftasonu 10 dan önce 20 dan sonra çıkamaz. else çıkar
+      if (this.isWorking == false) {
+        if (saat <= 10 || saat >= 20) {
+          this.isAllowed = false;
+          this.message = messageList[0];
+        } else {
+          this.isAllowed = true;
+          this.message = messageList[1];
+        }
+      } else {
+        this.isAllowed = true;
+        this.message = messageList[1];
+      }
     }
 
-    print(this.isAllowed.toString());
+    if (gun <= 5) {
+      //hafta içi çalışmayan 20 yaş altı 13 den önce ve 16 dan sonra çıkamaz
+      if (this.isWorking == false) {
+        if (age <= 20) {
+          if (saat <= 13 || saat >= 16) {
+            this.isAllowed = false;
+            this.message = messageList[0];
+          } else {
+            this.isAllowed = true;
+            this.message = messageList[1];
+          }
+        }
+      }
+    }
+
+    if (gun <= 5) {
+      //hafta içi çalışmayan 65 yaş üstü 10 dan önce ve 13 den sonra çıkamaz
+      if (this.isWorking == false) {
+        if (age >= 65) {
+          if (saat <= 10 || saat >= 16) {
+            this.isAllowed = false;
+            this.message = messageList[0];
+          } else {
+            this.isAllowed = true;
+            this.message = messageList[1];
+          }
+        }
+      }
+      if (gun == 1) {
+        if (this.isWorking == false) {
+          if (saat <= 5) {
+            this.isAllowed = false;
+            this.message = messageList[0];
+          } else {
+            this.isAllowed = true;
+            this.message = messageList[1];
+          }
+        }
+      }
+    }
   }
+
 }
