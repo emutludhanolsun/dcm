@@ -56,11 +56,11 @@ class MyCustomFormState extends State<MyCustomForm> {
   TextEditingController workStatusFieldController = TextEditingController();
 
   final workingStatusList = {
-    '0': 'Çalışıyorum',
-    '1': 'Çalışmıyorum',
+    '0': 'Evet',
+    '1': 'Hayır',
   };
 
-  String workStatus = "Çalışıyorum";
+  String workStatus = "Hayır";
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +133,7 @@ class MyCustomFormState extends State<MyCustomForm> {
               });
             },
             decoration: new InputDecoration(
-              labelText: "Çalışma Durumu",
+              labelText: "İşe mi gidiyorsun ?",
               fillColor: Colors.white,
               border: new OutlineInputBorder(
                 borderRadius: new BorderRadius.circular(25),
