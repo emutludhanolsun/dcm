@@ -166,50 +166,54 @@ class MyCustomFormState extends State<MyCustomForm> {
   void _sendDataToSecondScreen(BuildContext context, String workStatus) {
     String ageToSend = ageFieldController.text;
 
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => InfoScreen(
-            age: int.parse(ageToSend),
-            workingStatus: workStatus,
-          ),
-        ));
-
-    print("age: " + ageToSend);
-    print("workStatus: " + workStatus);
     User user = new User(int.parse(ageToSend), workStatus);
-    print("dışarı çıkmasına izin var mı? " + user.isAllowed.toString());
-    print("mesaj: " + user.message);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => InfoScreen(
+          message: user.message  
+        ),
+      )
+    );
   }
 }
 
-//TODO: SONUÇ GÖSTERİLECEK
 class InfoScreen extends StatelessWidget {
-  final int age;
-  final String workingStatus;
-
-  InfoScreen({Key key, @required this.age, this.workingStatus}) : super(key: key);
+  final String message;
+  InfoScreen({Key key, @required this.message}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Info"),
+        title: Text("Dışarı Çıkma Durumu"),
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            // Navigate back to the first screen by popping the current route
-            // off the stack.
-            Navigator.pop(context);
-          },
-          child: Text('Go back!'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35),
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                // Navigate back to the first screen by popping the current route
+                // off the stack.
+                Navigator.pop(context);
+              },
+              child: Text("Geri Dön"),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-// TODO: Constructor fonksiyonu tamamlancak YA DA Class ı sil direkt fonksiyon yaz.
 class User {
   // String name;
   int age;
@@ -236,20 +240,14 @@ class User {
 
     int gun = DateTime.now().weekday;
     int saat = DateTime.now().hour;
-    gun = 3;
-    saat = 12;
-    
 
     if (gun <= 5) {
       //hafta içi çalışan çıkar. Çalışmayan 21-5 çıkamaz.
       if (this.isWorking == true) {
         this.isAllowed = true;
-        this.message = messageList[1];
-      }else{
-        if(saat <= 5 || saat >= 21){
+      } else {
+        if (saat <= 5 || saat >= 21) {
           this.isAllowed = false;
-          this.message = messageList[0];
-        }
         }
       }
     }
@@ -257,17 +255,11 @@ class User {
     if (gun >= 6) {
       //haftasonu çalışmayan çıkamaz. else çıkar
       if (this.isWorking == false) {
+        this.isAllowed = false;
+      } else {
         this.isAllowed = true;
-        this.message = messageList[1];
-      }else {
-          this.isAllowed = true;
-          this.message = messageList[1];
-        
-         
-        }
-      } 
-    
-    
+      }
+    }
 
     if (gun <= 5) {
       //hafta içi çalışmayan 20 yaş altı 13 den önce ve 16 dan sonra çıkamaz
@@ -275,10 +267,8 @@ class User {
         if (age <= 20) {
           if (saat <= 13 || saat >= 16) {
             this.isAllowed = false;
-            this.message = messageList[0];
           } else {
             this.isAllowed = true;
-            this.message = messageList[1];
           }
         }
       }
@@ -290,25 +280,27 @@ class User {
         if (age >= 65) {
           if (saat <= 10 || saat >= 16) {
             this.isAllowed = false;
-            this.message = messageList[0];
           } else {
             this.isAllowed = true;
-            this.message = messageList[1];
           }
         }
       }
+
       if (gun == 1) {
         if (this.isWorking == false) {
           if (saat <= 5) {
             this.isAllowed = false;
-            this.message = messageList[0];
           } else {
             this.isAllowed = true;
-            this.message = messageList[1];
           }
         }
       }
     }
-  }
 
+    if (this.isAllowed == true) {
+      this.message = messageList[1];
+    } else {
+      this.message = messageList[0];
+    }
+  }
 }
